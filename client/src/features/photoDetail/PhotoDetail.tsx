@@ -6,11 +6,13 @@ import { formatDate } from '../../lib/utils';
 
 const DetailContainer = styled.div`
   min-height: 100vh;
+  height: 100vh;
   background: #f8f9fa;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
 `;
 
 const DetailHeader = styled.div`
@@ -41,8 +43,16 @@ const DetailContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
-  gap: 40px;
+  padding: 20px 20px 60px 20px;
+  gap: 30px;
+  max-width: 100%;
+  overflow-x: hidden;
+  min-height: calc(100vh - 80px);
+
+  @media (min-width: 768px) {
+    padding: 40px 20px 80px 20px;
+    gap: 40px;
+  }
 
   @media (min-width: 1024px) {
     flex-direction: row;
@@ -50,18 +60,17 @@ const DetailContent = styled.div`
     align-items: flex-start;
     gap: 60px;
     padding: 60px 20px;
+    min-height: auto;
   }
 `;
 
 const PhotoContainer = styled.div`
-  max-height: 80vh;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
+  width: 100%;
   display: flex;
   justify-content: center;
   overflow: hidden;
-  width: 100%;
-
+  flex-shrink: 0;
+  
   @media (min-width: 1024px) {
     flex: 1;
     max-width: 600px;
@@ -70,53 +79,73 @@ const PhotoContainer = styled.div`
 
 const DetailImage = styled.img<{ $loaded: boolean }>`
   max-width: 100%;
-  max-height: 60vh;
   width: auto;
   height: auto;
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  opacity: ${props => (props.$loaded ? 1 : 0.7)};
+  opacity: ${props => props.$loaded ? 1 : 0.7};
   transition: opacity 0.3s ease;
-
-  @media (min-width: 1024px) {
-    max-height: 80vh;
-  }
 `;
 
 const MetadataCard = styled.div`
   background: white;
-  padding: 32px;
+  padding: 20px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   width: 100%;
-  max-width: 400px;
+  max-width: 100%;
+  margin-bottom: 40px;
+  box-sizing: border-box;
+
+  @media (min-width: 768px) {
+    padding: 32px;
+    max-width: 400px;
+  }
 
   @media (min-width: 1024px) {
     flex-shrink: 0;
     width: 350px;
+    margin-bottom: 0;
   }
 `;
 
 const PhotoTitle = styled.h1`
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   color: #212529;
   margin: 0 0 24px 0;
   line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+
+  @media (min-width: 768px) {
+    font-size: 24px;
+  }
 `;
 
 const MetadataGrid = styled.div`
   display: grid;
   gap: 16px;
+  width: 100%;
 `;
 
 const MetadataRow = styled.div`
   display: grid;
-  grid-template-columns: 100px 1fr;
-  gap: 16px;
+  grid-template-columns: 90px 1fr;
+  gap: 12px;
   padding: 12px 0;
   border-bottom: 1px solid #f1f3f4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  min-width: 0;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 120px 1fr;
+    gap: 16px;
+  }
 
   &:last-child {
     border-bottom: none;
@@ -124,17 +153,26 @@ const MetadataRow = styled.div`
 `;
 
 const MetadataLabel = styled.span`
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: #6c757d;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+
+  @media (min-width: 768px) {
+    font-size: 14px;
+    letter-spacing: 0.5px;
+  }
 `;
 
 const MetadataValue = styled.span`
   font-size: 16px;
   color: #212529;
   word-break: break-word;
+  overflow-wrap: break-word;
+  min-width: 0;
+  max-width: 100%;
 `;
 
 const ErrorMessage = styled.div`
@@ -152,6 +190,7 @@ interface PhotoDetailProps {
   onBack: () => void;
 }
 
+// Use RequiredFields utility type to ensure photo has dimensions
 type PhotoWithDimensions = RequiredFields<Photo, 'width' | 'height'>;
 
 export default function PhotoDetail({ photo, onBack }: PhotoDetailProps) {
@@ -161,11 +200,14 @@ export default function PhotoDetail({ photo, onBack }: PhotoDetailProps) {
   return (
     <DetailContainer>
       <DetailHeader>
-        <BackButton onClick={onBack} aria-label="Go back to photo grid">
+        <BackButton
+          onClick={onBack}
+          aria-label="Go back to photo grid"
+        >
           ← Back to Gallery
         </BackButton>
       </DetailHeader>
-
+      
       <DetailContent>
         {!imageError ? (
           <PhotoContainer>
@@ -185,7 +227,7 @@ export default function PhotoDetail({ photo, onBack }: PhotoDetailProps) {
             Failed to load image. Please try again later.
           </ErrorMessage>
         )}
-
+        
         <MetadataCard>
           <PhotoTitle>{photo.title}</PhotoTitle>
           <MetadataGrid>
@@ -199,9 +241,7 @@ export default function PhotoDetail({ photo, onBack }: PhotoDetailProps) {
             </MetadataRow>
             <MetadataRow>
               <MetadataLabel>Dimensions</MetadataLabel>
-              <MetadataValue>
-                {photo.width} × {photo.height}
-              </MetadataValue>
+              <MetadataValue>{photo.width} × {photo.height}</MetadataValue>
             </MetadataRow>
             <MetadataRow>
               <MetadataLabel>Photo ID</MetadataLabel>
