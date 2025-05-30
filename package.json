@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
+    "test": "jest",
     "build": "vite build",
     "preview": "vite preview"
   },

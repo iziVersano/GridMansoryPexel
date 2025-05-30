@@ -25,8 +25,7 @@ yarn install
 
 ### 3. Add Pexels API key
 
-Create `.env` inside the `client` folder:
-
+Create a `.env` file inside the `client` folder:
 ```
 VITE_PEXELS_API_KEY=your_pexels_api_key
 ```
@@ -49,33 +48,50 @@ The app follows a **feature-based folder structure** (e.g. `photoGrid`, `photoDe
 
 ---
 
-## ⚙️ Key Features
+## ⚡ Performance Techniques
 
-- 🔍 Search photos by title or photographer
-- 🧱 Masonry layout without external layout libraries
-- 📦 Virtualized rendering for performance
-- 🔄 Infinite scroll
-- 📸 Detailed view with metadata
-- 📱 Responsive design
+- **Manual Virtualization**: Renders only visible items to reduce DOM load.  
+- **Infinite Scroll**: Loads more data only when needed.  
+- **Memoization & Throttling**: Used in scroll handling and layout calculations.  
+- **Lazy Loading**: Components and images load on demand.  
 
 ---
 
-## ⚡ Performance Techniques
+## 🧪 Testing
 
-- **Manual Virtualization**: Renders only visible items to reduce DOM load.
-- **Infinite Scroll**: Loads more data only when needed.
-- **Memoization & Throttling**: Used in scroll handling and layout calculations.
-- **Lazy Loading**: Components and images load on demand.
+We use **Jest** with **ts-jest** and **@testing-library/react** for unit and integration tests.
+
+1. **Install test dependencies**
+   ```bash
+   yarn add -D jest ts-jest @types/jest jest-environment-jsdom @testing-library/react @testing-library/jest-dom
+   ```
+
+2. **Run all tests**
+   ```bash
+   yarn test
+   ```
+
+3. **Watch mode**
+   ```bash
+   yarn test:watch
+   ```
+
+4. **Generate coverage report**
+   ```bash
+   yarn test:coverage
+   ```
+
+> **Note:** Jest configuration lives in `jest.config.js` (uses `ts-jest` preset), and setup helpers are in `client/src/setupTests.ts`.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- React + TypeScript
-- Vite
-- Styled-components
-- Vercel (deployment)
-- Pexels API
+- React + TypeScript  
+- Vite  
+- Styled-components  
+- Vercel (deployment)  
+- Pexels API  
 
 ---
 
