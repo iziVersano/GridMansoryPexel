@@ -2,10 +2,37 @@ import { Photo } from "@/types/photo";
 
 // Pexels API Configuration
 const BASE_URL = "https://api.pexels.com/v1";
-const API_KEY = import.meta.env.VITE_PEXELS_API_KEY;
-const HEADERS = {
-  Authorization: API_KEY,
-};
+
+function getApiKey(): string {
+  // For browser/Vite environment (primary use case)
+  try {
+    // @ts-ignore - This will only work in Vite environment
+    const viteApiKey = import.meta.env.VITE_PEXELS_API_KEY;
+    if (viteApiKey) {
+      return viteApiKey;
+    }
+  } catch (e) {
+    // Fallback for Jest environment
+  }
+  
+  // For Jest tests, use process.env if available
+  try {
+    const apiKey = process.env.VITE_PEXELS_API_KEY;
+    if (apiKey) {
+      return apiKey;
+    }
+  } catch (e) {
+    // process not available in browser
+  }
+  
+  throw new Error('Pexels API key is not configured. Please check your environment variables.');
+}
+
+function getHeaders() {
+  return {
+    Authorization: getApiKey(),
+  };
+}
 
 interface PexelsPhoto {
   id: number;
@@ -57,13 +84,15 @@ function mapPexelsPhotoToPhoto(photo: PexelsPhoto): Photo {
  * Makes a request to the Pexels API with error handling
  */
 async function makePexelsRequest(endpoint: string): Promise<PexelsResponse> {
-  if (!API_KEY) {
+  const apiKey = getApiKey();
+  
+  if (!apiKey) {
     throw new Error("Pexels API key is not configured. Please check your environment variables.");
   }
 
   try {
     const response = await fetch(`${BASE_URL}${endpoint}`, {
-      headers: HEADERS,
+      headers: getHeaders(),
     });
 
     if (!response.ok) {
