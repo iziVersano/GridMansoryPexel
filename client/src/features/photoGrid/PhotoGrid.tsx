@@ -250,7 +250,7 @@ const PhotoGrid = React.memo<PhotoGridProps>(({
 
     const columnCount = Math.floor(estimatedWidth / (estimatedColumnWidth + gap));
     const columns = Array(columnCount).fill(0);
-    const positions = [];
+    const positions: PhotoPosition[] = [];
     
     skeletonPlaceholders.forEach((photo) => {
       const shortestColumnIndex = columns.indexOf(Math.min(...columns));
@@ -282,7 +282,7 @@ const PhotoGrid = React.memo<PhotoGridProps>(({
 
   // Single return point to avoid hooks order issues
   return (
-    <GridContainer ref={mainContainerRef}>
+    <GridContainer ref={mainContainerRef} data-testid="photo-grid">
       <GridWrapper>
         {shouldShowInitialSkeleton ? (
           <GridInner height={initialSkeletonItems[initialSkeletonItems.length - 1]?.y + initialSkeletonItems[initialSkeletonItems.length - 1]?.height + gap || 800}>

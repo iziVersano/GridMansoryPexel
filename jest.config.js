@@ -1,22 +1,25 @@
 export default {
   preset: 'ts-jest',
+  setupFiles: ['<rootDir>/client/src/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/client/src/setupTests.ts'],
   testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
-  moduleNameMapping: {
+  transform: {
+    '^.+\\.(ts|tsx)$': ['ts-jest', {
+      tsconfig: {
+        jsx: 'react-jsx',
+      },
+    }],
+  },
+  moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/client/src/$1',
   },
-  transform: {
-    '^.+\\.(ts|tsx)$': 'ts-jest',
-  },
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   testMatch: [
     '<rootDir>/client/src/**/__tests__/**/*.(ts|tsx)',
     '<rootDir>/client/src/**/*.(test|spec).(ts|tsx)',
   ],
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-  collectCoverageFrom: [
-    'client/src/**/*.(ts|tsx)',
-    '!client/src/**/*.d.ts',
-    '!client/src/main.tsx',
-    '!client/src/vite-env.d.ts',
+  testTimeout: 10000,
+  transformIgnorePatterns: [
+    'node_modules/(?!(.*\\.mjs$))',
   ],
 };
