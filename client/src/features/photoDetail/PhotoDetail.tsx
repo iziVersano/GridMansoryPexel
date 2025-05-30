@@ -9,6 +9,8 @@ const DetailContainer = styled.div`
   background: #f8f9fa;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const DetailHeader = styled.div`
@@ -39,7 +41,7 @@ const DetailContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 20px;
+  padding: 20px;
   gap: 40px;
 
   @media (min-width: 1024px) {
@@ -59,7 +61,7 @@ const PhotoContainer = styled.div`
   justify-content: center;
   overflow: hidden;
   width: 100%;
-  
+
   @media (min-width: 1024px) {
     flex: 1;
     max-width: 600px;
@@ -68,14 +70,18 @@ const PhotoContainer = styled.div`
 
 const DetailImage = styled.img<{ $loaded: boolean }>`
   max-width: 100%;
-  max-height: 100%;
+  max-height: 60vh;
   width: auto;
   height: auto;
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  opacity: ${props => props.$loaded ? 1 : 0.7};
+  opacity: ${props => (props.$loaded ? 1 : 0.7)};
   transition: opacity 0.3s ease;
+
+  @media (min-width: 1024px) {
+    max-height: 80vh;
+  }
 `;
 
 const MetadataCard = styled.div`
@@ -146,7 +152,6 @@ interface PhotoDetailProps {
   onBack: () => void;
 }
 
-// Use RequiredFields utility type to ensure photo has dimensions
 type PhotoWithDimensions = RequiredFields<Photo, 'width' | 'height'>;
 
 export default function PhotoDetail({ photo, onBack }: PhotoDetailProps) {
@@ -156,14 +161,11 @@ export default function PhotoDetail({ photo, onBack }: PhotoDetailProps) {
   return (
     <DetailContainer>
       <DetailHeader>
-        <BackButton
-          onClick={onBack}
-          aria-label="Go back to photo grid"
-        >
+        <BackButton onClick={onBack} aria-label="Go back to photo grid">
           ← Back to Gallery
         </BackButton>
       </DetailHeader>
-      
+
       <DetailContent>
         {!imageError ? (
           <PhotoContainer>
@@ -183,7 +185,7 @@ export default function PhotoDetail({ photo, onBack }: PhotoDetailProps) {
             Failed to load image. Please try again later.
           </ErrorMessage>
         )}
-        
+
         <MetadataCard>
           <PhotoTitle>{photo.title}</PhotoTitle>
           <MetadataGrid>
@@ -197,7 +199,9 @@ export default function PhotoDetail({ photo, onBack }: PhotoDetailProps) {
             </MetadataRow>
             <MetadataRow>
               <MetadataLabel>Dimensions</MetadataLabel>
-              <MetadataValue>{photo.width} × {photo.height}</MetadataValue>
+              <MetadataValue>
+                {photo.width} × {photo.height}
+              </MetadataValue>
             </MetadataRow>
             <MetadataRow>
               <MetadataLabel>Photo ID</MetadataLabel>
